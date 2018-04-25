@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
-import {Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'react-native';
+import {Alert, Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Button, Input} from './common'
+import {Button, Card, CardSection, Input} from './common'
 
 class Authentication extends Component {
     constructor(){
         super();
-        this.state = {username: null, password: null};
+        this.state = {username: 'user1@wogether.com', password: 'Password44$'};
     }
 
     userSignup(){
         if (!this.state.username || !this.state.password) return;
 
-        fetch('http://192.168.1.63:8085/auth/login/', {
+        fetch('http://192.168.104.76:8085/auth/login/', {
             method: 'POST',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -20,7 +20,13 @@ class Authentication extends Component {
                 password: this.state.password,
             })
         })
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status == 200){
+                return response.json();
+            }else{
+                Alert.alert('Login failed');
+            }
+        })
         .then((responseData) => {
             this.saveItem('token', responseData.token),
             Alert.alert('Signup succes');
@@ -28,8 +34,31 @@ class Authentication extends Component {
         })
         .done();
     }
+
     userLogin(){
-        Actions.HomePage();
+        if (!this.state.username || !this.state.password) return;
+
+        fetch('http://192.168.104.76:8085/auth/login/', {
+            method: 'POST',
+            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: 'user1@wogether.com',//this.state.username,
+                password: 'Password44$',//this.state.password,
+            })
+        })
+        .then((response) => response.json())
+        .then((responseData) => {
+            console.log(responseData);
+            if(responseData.key){
+                this.saveItem('token', responseData.key);
+                Alert.alert('Login succes');
+                Actions.HomePage();
+            }else{
+                Alert.alert('Login failed');
+            }
+
+        })
+        .done();
     }
 
     async saveItem(item, selectedValue){
@@ -42,33 +71,38 @@ class Authentication extends Component {
 
     render(){
         return(
-            <View>
-                <Input
-                    editable={true}
-                    onChangeText={(username) => this.setState({username})}
-                    placeholder='Username'
-                    ref='username'
-                    returnKeyType='next'
-                    value={this.state.username}
-                />
-                <Input
-                    editable={true}
-                    onChangeText={(password) => this.setState({password})}
-                    placeholder='Password'
-                    ref='password'
-                    returnKeyType='next'
-                    secureTextEntry={true}
-                    value={this.state.password}
-                />
+            <Card>
+                <CardSection>
+                    <Input
+                        editable={true}
+                        onChangeText={(username) => this.setState({username})}
+                        placeholder='Username'
+                        ref='username'
+                        returnKeyType='next'
+                        value={this.state.username}
+                    />
+                </CardSection>
+                <CardSection>
+                    <Input
+                        editable={true}
+                        onChangeText={(password) => this.setState({password})}
+                        placeholder='Password'
+                        ref='password'
+                        returnKeyType='next'
+                        secureTextEntry={true}
+                        value={this.state.password}
+                    />
+                </CardSection>
+                <CardSection>
+                    <Button onPress={this.userLogin.bind(this)}>
+                        Log in
+                    </Button>
 
-                <Button onPress={this.userLogin.bind(this)}>
-                    Log in
-                </Button>
-
-                <Button onPress={this.userSignup.bind(this)}>
-                    Sign up
-                </Button>
-            </View>
+                    <Button onPress={this.userSignup.bind(this)}>
+                        Sign up
+                    </Button>
+                </CardSection>
+            </Card>
         );
     }
 }
