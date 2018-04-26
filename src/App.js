@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {AsyncStorage, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
 import {Spinner} from './components/common';
-import Authentication from './components/Authentication';
-import HomePage from './components/HomePage';
+import LoginForm from './components/pages/authentication/LoginForm';
+import SignupForm from './components/pages/authentication/SignupForm';
+import HomePage from './components/pages/HomePage';
 
 class App extends Component {
   constructor(){
@@ -12,7 +13,6 @@ class App extends Component {
   }
 
   componentDidMount(){
-    console.log('MOUNTED!');
     AsyncStorage.getItem('token').then((token) => {
       this.setState({ hasToken: token !== null, isLoaded: true })
     });
@@ -25,20 +25,30 @@ class App extends Component {
       return(
         <Router>
           <Scene key='root'>
+            <Scene key='auth-pages' initial={!this.state.hasToken}>
               <Scene
-                  component={Authentication}
+                  component={LoginForm}
                   hideNavBar={true}
-                  initial={!this.state.hasToken}
-                  key='Authentication'
+                  initial={true}
+                  key='LoginForm'
                   title='Authentication'
               />
               <Scene
+                  component={SignupForm}
+                  hideNavBar={true}
+                  key='SignupForm'
+                  title='Sign up'
+              />
+            </Scene>
+            <Scene key='app-pages' initial={this.state.hasToken}>
+              <Scene
                   component={HomePage}
                   hideNavBar={true}
-                  initial={this.state.hasToken}
+                  initial={true}
                   key='HomePage'
                   title='Home Page'
               />
+            </Scene>
           </Scene>
         </Router>
       );

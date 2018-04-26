@@ -1,49 +1,23 @@
 import React, {Component} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Button, Card, CardSection, Input} from './common'
+import {Button, Card, CardSection, Input} from '../../common'
 
-class Authentication extends Component {
+class LoginForm extends Component {
     constructor(){
         super();
         this.state = {username: 'user1@wogether.com', password: 'Password44$'};
     }
 
-    userSignup(){
-        if (!this.state.username || !this.state.password) return;
-
-        fetch('http://192.168.104.76:8085/auth/login/', {
-            method: 'POST',
-            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                username: this.state.username,
-                password: this.state.password,
-            })
-        })
-        .then((response) => {
-            if (response.status == 200){
-                return response.json();
-            }else{
-                Alert.alert('Login failed');
-            }
-        })
-        .then((responseData) => {
-            this.saveItem('token', responseData.token),
-            Alert.alert('Signup succes');
-            Actions.HomePage();
-        })
-        .done();
-    }
-
     userLogin(){
-        if (!this.state.username || !this.state.password) return;
+        // if (!this.state.username || !this.state.password) return;
 
         fetch('http://192.168.104.76:8085/auth/login/', {
             method: 'POST',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({
-                email: 'user1@wogether.com',//this.state.username,
-                password: 'Password44$',//this.state.password,
+                email: this.state.username,
+                password: this.state.password,
             })
         })
         .then((response) => response.json())
@@ -98,7 +72,7 @@ class Authentication extends Component {
                         Log in
                     </Button>
 
-                    <Button onPress={this.userSignup.bind(this)}>
+                    <Button onPress={() => {Actions.SignupForm()}}>
                         Sign up
                     </Button>
                 </CardSection>
@@ -107,4 +81,4 @@ class Authentication extends Component {
     }
 }
 
-export default Authentication;
+export default LoginForm;
