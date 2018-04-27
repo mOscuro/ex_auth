@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Button, Card, CardSection, Input} from '../../common'
+import {Button, Card, CardSection, Input} from 'ex_auth/src/components/common'
 
 class SignupForm extends Component {
     constructor(){

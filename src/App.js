@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {AsyncStorage, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
-import {Spinner} from './components/common';
-import LoginForm from './components/pages/authentication/LoginForm';
-import SignupForm from './components/pages/authentication/SignupForm';
-import HomePage from './components/pages/HomePage';
+import {Spinner} from 'ex_auth/src/components/common';
+import LoginForm from 'ex_auth/src/components/pages/authentication/LoginForm';
+import SignupForm from 'ex_auth/src/components/pages/authentication/SignupForm';
+import HomePage from 'ex_auth/src/components/pages/HomePage';
 
 class App extends Component {
   constructor(){

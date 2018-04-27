@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Alert, AsyncStorage, Image, Text, View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Button, Card, CardSection} from '../common';
+import {Button, Card, CardSection} from 'ex_auth/src/components/common';
 
 class HomePage extends Component{
 
