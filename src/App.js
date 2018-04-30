@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {AsyncStorage, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
 import {Spinner} from 'ex_auth/src/components/common';
+import AuthClient from 'ex_auth/src/api_client/auth_client.js';
+import RestClient from 'ex_auth/src/api_client/rest_client.js';
 import LoginForm from 'ex_auth/src/components/pages/authentication/LoginForm';
 import SignupForm from 'ex_auth/src/components/pages/authentication/SignupForm';
 import HomePage from 'ex_auth/src/components/pages/HomePage';
@@ -10,6 +12,18 @@ class App extends Component {
   constructor(){
     super();
     this.state = { hasToken: false, isLoaded: false };
+    
+    // clients initialization:
+    const authClient = new AuthClient();
+    const restClient = new RestClient({
+      apiOrigin: 'http://192.168.104.76:8085',
+      getToken: authClient.getInstanceToken,
+    });
+    this.clients = {
+      authClient,
+      restClient,
+    };
+
   }
 
   componentDidMount(){
@@ -22,11 +36,13 @@ class App extends Component {
     if(!this.state.isLoaded){
       return <Spinner />
     }else{
+      const rootProps = {clients: this.clients};
       return(
         <Router>
           <Scene key='root'>
             <Scene key='auth-pages' initial={!this.state.hasToken}>
               <Scene
+                  {...rootProps}
                   component={LoginForm}
                   hideNavBar={true}
                   initial={true}
@@ -34,6 +50,7 @@ class App extends Component {
                   title='Authentication'
               />
               <Scene
+                  {...rootProps}
                   component={SignupForm}
                   hideNavBar={true}
                   key='SignupForm'
@@ -42,6 +59,7 @@ class App extends Component {
             </Scene>
             <Scene key='app-pages' initial={this.state.hasToken}>
               <Scene
+                  {...rootProps}
                   component={HomePage}
                   hideNavBar={true}
                   initial={true}

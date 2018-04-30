@@ -13,40 +13,17 @@ class LoginForm extends Component {
     userLogin(){
         // if (!this.state.email || !this.state.password) return;
 
-        const response = WOGApiClient.auth_login(this.state.email, this.state.email);
-        console.log('=====AXIOS========');
-        console.log(response);
-        console.log('========================');
-
-        fetch('http://192.168.104.76:8085/auth/login/', {
-            method: 'POST',
-            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: this.state.email,
-                password: this.state.password,
-            })
-        })
-        .then((response) => response.json())
+        const {clients} = this.props;
+        const {email, password} = this.state
+        const response = WOGApiClient.authLogin(clients.restClient, {email, password})
         .then((responseData) => {
             console.log(responseData);
             if(responseData.key){
-                this.saveItem('token', responseData.key);
-                Alert.alert('Login succes');
+                clients.authClient.setToken(responseData.key);
                 Actions.HomePage();
-            }else{
-                Alert.alert('Login failed');
             }
-
         })
         .done();
-    }
-
-    async saveItem(item, selectedValue){
-        try{
-            await AsyncStorage.setItem(item, selectedValue);
-        }catch (error){
-            console.error('AsyncStorage error: ' + error.message);
-        }
     }
 
     render(){

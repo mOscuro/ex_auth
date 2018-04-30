@@ -2,45 +2,37 @@ import React, {Component} from 'react';
 import {Alert, AsyncStorage, Image, Text, View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import {Button, Card, CardSection} from 'ex_auth/src/components/common';
+import * as WOGApiClient from 'ex_auth/src/api_client/WogApiClient.js';
 
 class HomePage extends Component{
 
+    constructor(){
+        super();
+        this.state = { workouts: null };
+    }
+
     getWorkouts(){
-        AsyncStorage.getItem('token').then((token) =>{
-            console.log('===========token=========');
-            console.log(token);
-            fetch('http://192.168.104.76:8085/workouts/', {
-                method: 'GET',
-                headers: { 'Authorization': 'Token ' + token }
-            })
-            .then((response) => response.text())
-            .then((workouts) => {
-                Alert.alert('workouts', workouts)
-            })
-            .done();
-        })
+        const {clients} = this.props;
+        const response = WOGApiClient.workoutList(clients.restClient)
+        .then((workouts) => this.setState({workouts}));
     }
 
     userLogout(){
-        AsyncStorage.getItem('token').then((token) =>{
-            fetch('http://192.168.104.76:8085/auth/logout/', {
-                method: 'POST',
-                headers: { 'Authorization': 'Token ' + token }
-            })
-            .then((response) => response.json())
-            .then(() => {
-                this.removeItem('token');
-                Alert.alert('Logout success');
-                Actions.LoginForm();
-            });
-        })
+        const {clients} = this.props;
+        WOGApiClient.authLogout(clients.restClient)
+        .then((response) => {
+            clients.authClient.removeToken();
+            Actions.LoginForm();
+        }).catch((error)=>console.log(error));
     }
-    
-    async removeItem(item){
-        try{
-            await AsyncStorage.removeItem('token');
-        }catch (error){
-            console.log('AsyncStorage error: ' + error.message);
+
+    renderWorkoutList(){
+        if(this.state.workouts){
+            return this.state.workouts.map(workout=>(
+                <CardSection><Text>{workout.name}</Text></CardSection>
+            ))
+        }else{
+            return <CardSection><Text>No workout</Text></CardSection>;
         }
     }
 
@@ -51,6 +43,7 @@ class HomePage extends Component{
                     <Button onPress={this.getWorkouts.bind(this)}>Get Workouts</Button>
                     <Button onPress={this.userLogout.bind(this)}>Log out</Button>
                 </CardSection>
+                {this.renderWorkoutList()}
             </Card>
         );
     }

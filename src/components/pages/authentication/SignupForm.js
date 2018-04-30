@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import {Button, Card, CardSection, Input} from 'ex_auth/src/components/common'
+import * as WOGApiClient from 'ex_auth/src/api_client/WogApiClient.js';
 
 class SignupForm extends Component {
     constructor(){
@@ -16,6 +17,16 @@ class SignupForm extends Component {
 
     userSignup(){
         // if (!this.state.username || !this.state.password) return;
+
+        const {clients} = this.props;
+        const {firstName, lastName, email, password} = this.state
+        const response = WOGApiClient.authRegister(clients.restClient, {firstName, lastName, email, password})
+        .then((responseData) => {
+            console.log('%%%%%%%%%%%%');
+            console.log(responseData);
+            Actions.HomePage();
+        })
+        .done();
 
         fetch('http://192.168.104.76:8085/auth/registration/', {
             method: 'POST',
