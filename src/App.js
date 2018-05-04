@@ -7,6 +7,7 @@ import RestClient from 'ex_auth/src/api_client/rest_client.js';
 import LoginForm from 'ex_auth/src/components/pages/authentication/LoginForm';
 import SignupForm from 'ex_auth/src/components/pages/authentication/SignupForm';
 import HomePage from 'ex_auth/src/components/pages/HomePage';
+import WorkoutDetail from 'ex_auth/src/components/pages/WorkoutDetail';
 
 class App extends Component {
   constructor(){
@@ -65,6 +66,14 @@ class App extends Component {
                   initial={true}
                   key='HomePage'
                   title='Home Page'
+              />
+              <Scene
+                  {...rootProps}
+                  component={WorkoutDetail}
+                  hideNavBar={false}
+                  initial={false}
+                  key='WorkoutDetail'
+                  title='Workout Detail'
               />
             </Scene>
           </Scene>

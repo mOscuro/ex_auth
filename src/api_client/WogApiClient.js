@@ -83,3 +83,11 @@ export function workoutList(restClient){
         withToken: true,
     });
 }
+
+export function workoutRounds(restClient, workoutId){
+    return restClient.request({
+        url: `workouts/${workoutId}/rounds/`,
+        method: RestClient.httpMethods.GET,
+        withToken: true,
+    });
+}

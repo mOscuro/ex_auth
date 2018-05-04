@@ -10,8 +10,8 @@ class HomePage extends Component{
         super();
         this.state = { workouts: null };
     }
-
-    getWorkouts(){
+ 
+    componentDidMount(){
         const {clients} = this.props;
         const response = WOGApiClient.workoutList(clients.restClient)
         .then((workouts) => this.setState({workouts}));
@@ -26,10 +26,20 @@ class HomePage extends Component{
         }).catch((error)=>console.log(error));
     }
 
+    onpenWorkoutDetail(workoutId){
+        Actions.WorkoutDetail({workoutId});
+    }
+
     renderWorkoutList(){
         if(this.state.workouts){
             return this.state.workouts.map(workout=>(
-                <CardSection><Text>{workout.name}</Text></CardSection>
+                <CardSection>
+                    <Button
+                        onPress={() => this.onpenWorkoutDetail(workout.id)}
+                    >
+                    {workout.name}
+                    </Button>
+                </CardSection>
             ))
         }else{
             return <CardSection><Text>No workout</Text></CardSection>;
@@ -40,7 +50,7 @@ class HomePage extends Component{
         return(
             <Card>
                 <CardSection>
-                    <Button onPress={this.getWorkouts.bind(this)}>Get Workouts</Button>
+                    <Button>New Workout</Button>
                     <Button onPress={this.userLogout.bind(this)}>Log out</Button>
                 </CardSection>
                 {this.renderWorkoutList()}

@@ -22,8 +22,6 @@ class SignupForm extends Component {
         const {firstName, lastName, email, password} = this.state
         const response = WOGApiClient.authRegister(clients.restClient, {firstName, lastName, email, password})
         .then((responseData) => {
-            console.log('%%%%%%%%%%%%');
-            console.log(responseData);
             Actions.HomePage();
         })
         .done();
