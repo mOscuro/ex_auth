@@ -1,8 +1,32 @@
 import React, {Component} from 'react';
-import {Alert, AsyncStorage, Image, Text, View} from 'react-native';
+import {
+    Alert,
+    AsyncStorage,
+    Image,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Button, Card, CardSection} from 'ex_auth/src/components/common';
-import * as WOGApiClient from 'ex_auth/src/api_client/WogApiClient.js';
+import {
+    Button,
+    Card,
+    CardSection,
+    FloatingCreateButton
+} from '@components/common';
+import * as WOGApiClient from '@api_client/WogApiClient.js';
+
+
+const styles = StyleSheet.create({
+    mainContainerStyle: {
+        flex:1,
+        margin: 5,
+    },
+    mainContainerStyle: {
+        flex:1,
+        margin: 5,
+    }
+});
 
 class HomePage extends Component{
 
@@ -17,17 +41,12 @@ class HomePage extends Component{
         .then((workouts) => this.setState({workouts}));
     }
 
-    userLogout(){
-        const {clients} = this.props;
-        WOGApiClient.authLogout(clients.restClient)
-        .then((response) => {
-            clients.authClient.removeToken();
-            Actions.LoginForm();
-        }).catch((error)=>console.log(error));
+    onpenWorkoutDetail(workout){
+        Actions.WorkoutDetail({workoutId: workout.id, title: workout.name});
     }
 
-    onpenWorkoutDetail(workoutId){
-        Actions.WorkoutDetail({workoutId});
+    handleCreateWorkout(){
+        console.log('create workout');
     }
 
     renderWorkoutList(){
@@ -35,7 +54,8 @@ class HomePage extends Component{
             return this.state.workouts.map(workout=>(
                 <CardSection>
                     <Button
-                        onPress={() => this.onpenWorkoutDetail(workout.id)}
+                        key={workout.id}
+                        onPress={() => this.onpenWorkoutDetail(workout)}
                     >
                     {workout.name}
                     </Button>
@@ -48,13 +68,16 @@ class HomePage extends Component{
 
     render(){
         return(
-            <Card>
-                <CardSection>
-                    <Button>New Workout</Button>
-                    <Button onPress={this.userLogout.bind(this)}>Log out</Button>
-                </CardSection>
-                {this.renderWorkoutList()}
-            </Card>
+            <View style={styles.mainContainerStyle}>
+                <Card>
+                    {this.renderWorkoutList()}
+                </Card>
+                <FloatingCreateButton
+                    customCallback={() => this.handleCreateWorkout()}
+                    inputLabel='Create a workout'
+                    placeHolder='Name it...'
+                />
+            </View>
         );
     }
 }

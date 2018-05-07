@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import {AsyncStorage, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
-import {Spinner} from 'ex_auth/src/components/common';
-import AuthClient from 'ex_auth/src/api_client/auth_client.js';
-import RestClient from 'ex_auth/src/api_client/rest_client.js';
-import LoginForm from 'ex_auth/src/components/pages/authentication/LoginForm';
-import SignupForm from 'ex_auth/src/components/pages/authentication/SignupForm';
-import HomePage from 'ex_auth/src/components/pages/HomePage';
-import WorkoutDetail from 'ex_auth/src/components/pages/WorkoutDetail';
+import {Actions} from 'react-native-router-flux';
+import {Spinner} from '@components/common';
+import AuthClient from '@api_client/auth_client.js';
+import RestClient from '@api_client/rest_client.js';
+import * as WOGApiClient from '@api_client/WogApiClient.js';
+import LoginForm from '@components/pages/authentication/LoginForm';
+import SignupForm from '@components/pages/authentication/SignupForm';
+import HomePage from '@components/pages/HomePage';
+import WorkoutDetail from '@components/pages/WorkoutDetail';
 
 class App extends Component {
   constructor(){
@@ -24,7 +26,14 @@ class App extends Component {
       authClient,
       restClient,
     };
+  }
 
+  userLogout(){
+    WOGApiClient.authLogout(this.clients.restClient)
+    .then((response) => {
+        this.clients.authClient.removeToken();
+        Actions.LoginForm();
+    }).catch((error)=>console.log(error));
   }
 
   componentDidMount(){
@@ -40,7 +49,7 @@ class App extends Component {
       const rootProps = {clients: this.clients};
       return(
         <Router>
-          <Scene key='root'>
+          <Scene key='root' hideNavBar={true}>
             <Scene key='auth-pages' initial={!this.state.hasToken}>
               <Scene
                   {...rootProps}
@@ -62,15 +71,15 @@ class App extends Component {
               <Scene
                   {...rootProps}
                   component={HomePage}
-                  hideNavBar={true}
                   initial={true}
                   key='HomePage'
                   title='Home Page'
+                  onRight={() => this.userLogout()} 
+                  rightTitle='Logout'
               />
               <Scene
                   {...rootProps}
                   component={WorkoutDetail}
-                  hideNavBar={false}
                   initial={false}
                   key='WorkoutDetail'
                   title='Workout Detail'

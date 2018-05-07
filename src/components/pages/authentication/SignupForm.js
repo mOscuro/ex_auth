@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Button, Card, CardSection, Input} from 'ex_auth/src/components/common'
-import * as WOGApiClient from 'ex_auth/src/api_client/WogApiClient.js';
+import {Button, Card, CardSection, Input} from '@components/common'
+import * as WOGApiClient from '@api_client/WogApiClient.js';
 
 class SignupForm extends Component {
     constructor(){

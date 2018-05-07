@@ -1,7 +1,8 @@
 import React from 'react';
-import {Text} from 'react-native';
-import * as WOGApiClient from 'ex_auth/src/api_client/WogApiClient.js';
-import {Button, Card, CardSection, Spinner} from 'ex_auth/src/components/common';
+import {ScrollView, View, Text} from 'react-native';
+import * as WOGApiClient from '@api_client/WogApiClient.js';
+import {Button, Card, CardSection, Spinner} from '@components/common';
+import StepItem from '@components/StepItem';
 
 
 class WorkoutDetail extends React.Component {
@@ -20,19 +21,27 @@ class WorkoutDetail extends React.Component {
         .then((rounds) => this.setState({rounds}));
     }
 
+    renderSteps(round){
+        return round.steps.map(step => <StepItem step={step} />);
+    }
+
+    renderRounds(){
+        return this.state.rounds.map((round) => (
+            <Card>
+                <CardSection>
+                    <Text>Repeat {round.nbRepeat} times</Text>
+                </CardSection>
+                {this.renderSteps(round)}
+            </Card>
+        ));
+    }
+
     render() {
-        if(this.state.rounds){
-            const rounds = this.state.rounds.map((round) => {
-                const roundHeader = <CardSection><Text>Repeat {round.nbRepeat} times</Text></CardSection>;
-
-                const steps =  round.steps.map(step => <CardSection><Text>{step.nbRep} {step.exercise.name}</Text></CardSection>)
-                return (<Card><CardSection>{roundHeader}</CardSection>{steps}</Card>);
-            })
-            return rounds;
-
-        }else{
-            return <Spinner />
-        }
+        return (
+            this.state.rounds
+            ? <ScrollView>{this.renderRounds()}</ScrollView>
+            : <Spinner />
+        );
     }
 
 }

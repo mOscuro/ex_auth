@@ -1,7 +1,7 @@
 
 import { AsyncStorage } from 'react-native';
 import axios from 'axios';
-import RestClient from 'ex_auth/src/api_client/rest_client.js';
+import RestClient from '@api_client/rest_client.js';
 
 const WOG_API_ROOT_URL = 'http://192.168.104.76:8085';
 
