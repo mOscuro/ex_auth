@@ -18,9 +18,8 @@ import * as WOGApiClient from '@api_client/WogApiClient.js';
 
 
 const styles = StyleSheet.create({
-    mainContainerStyle: {
+    rootContainerStyle: {
         flex:1,
-        margin: 5,
     },
     mainContainerStyle: {
         flex:1,
@@ -68,11 +67,14 @@ class HomePage extends Component{
 
     render(){
         return(
-            <View style={styles.mainContainerStyle}>
-                <Card>
-                    {this.renderWorkoutList()}
-                </Card>
+            <View style={styles.rootContainerStyle}>
+                <View style={styles.mainContainerStyle}>
+                    <Card>
+                        {this.renderWorkoutList()}
+                    </Card>
+                </View>
                 <FloatingCreateButton
+                    style={{elevation:2}}
                     customCallback={() => this.handleCreateWorkout()}
                     inputLabel='Create a workout'
                     placeHolder='Name it...'
