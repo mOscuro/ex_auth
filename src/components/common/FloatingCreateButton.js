@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        elevation: 2
     },
     floatingInputContainerStyle: {
         position: 'absolute',
@@ -115,29 +114,34 @@ class FloatingCreateButton extends React.Component {
         );
 
         const floatingInput = (
-            <View style={styles.floatingBackgroundContainerStyle}>
-                <View style={styles.floatingInputContainerStyle}>
-                    <View style={styles.floatingInputTextContainerStyle}>
-                        <Text style={styles.floatingInputLabelStyle}>{inputLabel}</Text>
-                        <TextInput
-                            placeholder={placeHolder}
-                            style={styles.floatingInputTextStyle}
-                            autoCorrect={false}
-                            onChangeText={(inputValue) => this.setState({inputValue})}
-                            value={this.state.inputValue}
-                        />
-                    </View>
-                
-                    <TouchableOpacity
-                        style={styles.floatingInputButtonStyle}
-                        onPress={() => this.setState({isOpen: false})}
-                    >
-                        <View style={styles.floatingInputButtonContainerStyle}>
-                            <Text style={styles.buttonIconStyle}>Ok</Text>
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={true}>
+                <View style={styles.floatingBackgroundContainerStyle}>
+                    <View style={styles.floatingInputContainerStyle}>
+                        <View style={styles.floatingInputTextContainerStyle}>
+                            <Text style={styles.floatingInputLabelStyle}>{inputLabel}</Text>
+                            <TextInput
+                                placeholder={placeHolder}
+                                style={styles.floatingInputTextStyle}
+                                autoCorrect={false}
+                                onChangeText={(inputValue) => this.setState({inputValue})}
+                                value={this.state.inputValue}
+                            />
                         </View>
-                    </TouchableOpacity>
+                    
+                        <TouchableOpacity
+                            style={styles.floatingInputButtonStyle}
+                            onPress={() => this.setState({isOpen: false})}
+                        >
+                            <View style={styles.floatingInputButtonContainerStyle}>
+                                <Text style={styles.buttonIconStyle}>Ok</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
+            </Modal>
 
         );
         
