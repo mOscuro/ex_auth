@@ -16,8 +16,7 @@ class WorkoutDetail extends React.Component {
     }
 
     componentDidMount(){
-        const {clients} = this.props;
-        const response = WOGApiClient.workoutRounds(clients.restClient, this.props.workoutId)
+        const response = WOGApiClient.workoutRounds(this.props.workoutId)
         .then((rounds) => this.setState({rounds}));
     }
 

@@ -35,8 +35,11 @@ class HomePage extends Component{
     }
  
     componentDidMount(){
-        const {clients} = this.props;
-        const response = WOGApiClient.workoutList(clients.restClient)
+        this.fetchWorkoutList();
+    }
+
+    fetchWorkoutList(){
+        const response = WOGApiClient.workoutList()
         .then((workouts) => this.setState({workouts}));
     }
 
@@ -44,8 +47,13 @@ class HomePage extends Component{
         Actions.WorkoutDetail({workoutId: workout.id, title: workout.name});
     }
 
-    handleCreateWorkout(){
-        console.log('create workout');
+    handleCreateWorkout(name){
+        console.log(`create workout!`);
+        
+        const response = WOGApiClient.workoutCreate(name)
+        .then((workout) => Actions.WorkoutDetail({workoutId: workout.id, title: workout.name}));
+        
+        // this.fetchWorkoutList()
     }
 
     renderWorkoutList(){
@@ -75,7 +83,7 @@ class HomePage extends Component{
                 </View>
                 <FloatingCreateButton
                     style={{elevation:2}}
-                    customCallback={() => this.handleCreateWorkout()}
+                    customCallback={this.handleCreateWorkout}
                     inputLabel='Create a workout'
                     placeHolder='Name it...'
                 />

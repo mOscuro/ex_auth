@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     TouchableOpacity,
+    TouchableWithoutFeedback,
     Modal,
     StyleSheet,
     Text,
@@ -43,16 +44,20 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         backgroundColor: 'rgba(0,0,0,0.5)',
+        display: 'flex'
+    },
+    testStyle: {
+        flex: 1,
     },
     floatingInputContainerStyle: {
-        position: 'absolute',
-        bottom: 5,
-        left: 20,
-        right: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        height: 100,
+        width: '100%',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        zIndex: 1000
+        // zIndex: 1000,
     },
 
     floatingInputTextContainerStyle: {
@@ -98,7 +103,7 @@ class FloatingCreateButton extends React.Component {
     }
 
     render() {
-        const {inputLabel, placeHolder, onPress} = this.props;
+        const {inputLabel, placeHolder, onPress, customCallback} = this.props;
 
         const floatinButton = (
             <View style={styles.floatingButtonContainerStyle}>
@@ -113,12 +118,18 @@ class FloatingCreateButton extends React.Component {
             </View>
         );
 
+        const {inputValue} = this.state;
         const floatingInput = (
             <Modal
-                animationType='fade'
+                animationType='none'
                 transparent={true}
                 visible={true}>
                 <View style={styles.floatingBackgroundContainerStyle}>
+                    <TouchableWithoutFeedback
+                        onPress={() => this.setState({isOpen: false})}
+                    >
+                        <View style={styles.testStyle}/>
+                    </TouchableWithoutFeedback>
                     <View style={styles.floatingInputContainerStyle}>
                         <View style={styles.floatingInputTextContainerStyle}>
                             <Text style={styles.floatingInputLabelStyle}>{inputLabel}</Text>
@@ -127,13 +138,16 @@ class FloatingCreateButton extends React.Component {
                                 style={styles.floatingInputTextStyle}
                                 autoCorrect={false}
                                 onChangeText={(inputValue) => this.setState({inputValue})}
-                                value={this.state.inputValue}
+                                value={inputValue}
                             />
                         </View>
                     
                         <TouchableOpacity
                             style={styles.floatingInputButtonStyle}
-                            onPress={() => this.setState({isOpen: false})}
+                            onPress={() => {
+                                customCallback(inputValue);
+                                this.setState({isOpen: false})
+                            }}
                         >
                             <View style={styles.floatingInputButtonContainerStyle}>
                                 <Text style={styles.buttonIconStyle}>Ok</Text>

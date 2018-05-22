@@ -18,9 +18,8 @@ class SignupForm extends Component {
     userSignup(){
         // if (!this.state.username || !this.state.password) return;
 
-        const {clients} = this.props;
         const {firstName, lastName, email, password} = this.state
-        const response = WOGApiClient.authRegister(clients.restClient, {firstName, lastName, email, password})
+        const response = WOGApiClient.authRegister({firstName, lastName, email, password})
         .then((responseData) => {
             Actions.HomePage();
         })

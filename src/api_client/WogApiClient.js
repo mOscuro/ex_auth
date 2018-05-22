@@ -2,6 +2,7 @@
 import { AsyncStorage } from 'react-native';
 import axios from 'axios';
 import RestClient from '@api_client/rest_client.js';
+import AuthClient from '@api_client/auth_client.js';
 
 const WOG_API_ROOT_URL = 'http://192.168.104.76:8085';
 
@@ -48,9 +49,13 @@ class ApiClient{
     }
 }
 
-const client = new ApiClient();
+const authClient = new AuthClient();
+const restClient = new RestClient({
+    apiOrigin: 'http://192.168.104.76:8085',
+    getToken: authClient.getInstanceToken,
+  });
 
-export function authLogin(restClient, {email, password}){
+export function authLogin({email, password}){
     return restClient.request({
         url: `auth/login/`,
         method: RestClient.httpMethods.POST,
@@ -59,7 +64,7 @@ export function authLogin(restClient, {email, password}){
     });
 }
 
-export function authRegister(restClient, {firstName, lastName, email, password}){
+export function authRegister({firstName, lastName, email, password}){
     return restClient.request({
         url: `auth/registration/`,
         method: RestClient.httpMethods.POST,
@@ -68,7 +73,7 @@ export function authRegister(restClient, {firstName, lastName, email, password})
     });
 }
 
-export function authLogout(restClient){
+export function authLogout(){
     return restClient.request({
         url: `auth/logout/`,
         method: RestClient.httpMethods.POST,
@@ -76,7 +81,7 @@ export function authLogout(restClient){
     });
 }
 
-export function workoutList(restClient){
+export function workoutList(){
     return restClient.request({
         url: `workouts/`,
         method: RestClient.httpMethods.GET,
@@ -84,10 +89,19 @@ export function workoutList(restClient){
     });
 }
 
-export function workoutRounds(restClient, workoutId){
+export function workoutRounds(workoutId){
     return restClient.request({
         url: `workouts/${workoutId}/rounds/`,
         method: RestClient.httpMethods.GET,
         withToken: true,
+    });
+}
+
+export function workoutCreate(name){
+    return restClient.request({
+        url: `workouts/`,
+        method: RestClient.httpMethods.POST,
+        withToken: true,
+        body: {name}
     });
 }

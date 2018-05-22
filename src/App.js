@@ -29,7 +29,7 @@ class App extends Component {
   }
 
   userLogout(){
-    WOGApiClient.authLogout(this.clients.restClient)
+    WOGApiClient.authLogout()
     .then((response) => {
         this.clients.authClient.removeToken();
         Actions.LoginForm();
@@ -47,6 +47,7 @@ class App extends Component {
       return <Spinner />
     }else{
       const rootProps = {clients: this.clients};
+      const refreshOnBack = () => { Actions.pop({ refresh: {} }); }
       return(
         <Router>
           <Scene key='root' hideNavBar={true}>
@@ -83,6 +84,7 @@ class App extends Component {
                   initial={false}
                   key='WorkoutDetail'
                   title='Workout Detail'
+                  onBack={refreshOnBack}
               />
             </Scene>
           </Scene>
