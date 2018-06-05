@@ -54,6 +54,7 @@ class App extends Component {
             <Scene key='auth-pages' initial={!this.state.hasToken}>
               <Scene
                   {...rootProps}
+                  clients={this.clients}
                   component={LoginForm}
                   hideNavBar={true}
                   initial={true}

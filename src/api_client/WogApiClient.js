@@ -105,3 +105,11 @@ export function workoutCreate(name){
         body: {name}
     });
 }
+
+export function workoutDelete(id){
+    return restClient.request({
+        url: `workouts/${id}/`,
+        method: RestClient.httpMethods.DELETE,
+        withToken: true,
+    });
+}

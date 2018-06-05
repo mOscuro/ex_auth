@@ -12,8 +12,8 @@ class LoginForm extends Component {
 
     userLogin(){
         // if (!this.state.email || !this.state.password) return;
-
-        const {email, password} = this.state
+        const {clients} = this.props;
+        const {email, password} = this.state;
         const response = WOGApiClient.authLogin({email, password})
         .then((responseData) => {
             console.log(responseData);
