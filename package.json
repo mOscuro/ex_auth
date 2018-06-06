@@ -7,6 +7,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@apicase/adapter-fetch": "^0.14.2",
+    "@apicase/core": "^0.15.0",
+    "@apicase/services": "^0.7.4",
     "axios": "^0.18.0",
     "react": "16.3.1",
     "react-native": "0.55.3",

@@ -39,8 +39,8 @@ class HomePage extends Component{
     }
 
     fetchWorkoutList(){
-        const response = WOGApiClient.workoutList()
-        .then((workouts) => this.setState({workouts}));
+        WOGApiClient.workoutList()
+        .on('done', (res) => this.setState({workouts: res.body}));
     }
 
     onpenWorkoutDetail(workout){

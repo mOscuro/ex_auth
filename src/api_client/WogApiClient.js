@@ -55,13 +55,34 @@ const restClient = new RestClient({
     getToken: authClient.getInstanceToken,
   });
 
+import { apicase } from '@apicase/core'
+import { ApiService } from '@apicase/services'
+import fetch from '@apicase/adapter-fetch'
+
+const doRequest = apicase(fetch)
+
+const ApiRoot = new ApiService(fetch, { url: 'http://192.168.104.76:8085' }).on('error', err => console.error(err))
+
+const WithAuthService = ApiRoot.extend({
+    hooks: {
+      /* Add client token */
+      before ({ payload, next }) {
+          console.log('========');
+          console.log(payload);
+        next(payload)
+      },
+    }
+});
+
 export function authLogin({email, password}){
-    return restClient.request({
-        url: `auth/login/`,
-        method: RestClient.httpMethods.POST,
-        withToken: false,
-        body: {email, password}
-    });
+    const loginService = ApiRoot.extend({ url: 'auth/login/' })
+    return loginService.doRequest({
+        method: 'POST',
+        body: {
+            email,
+            password
+        }
+    })
 }
 
 export function authRegister({firstName, lastName, email, password}){
@@ -82,11 +103,11 @@ export function authLogout(){
 }
 
 export function workoutList(){
-    return restClient.request({
-        url: `workouts/`,
-        method: RestClient.httpMethods.GET,
-        withToken: true,
-    });
+    return doRequest({
+        url: 'http://192.168.104.76:8085/workouts/',
+        method: 'GET',
+        headers: {'Authorization': `token ${authClient.token}`},
+    })
 }
 
 export function workoutRounds(workoutId){

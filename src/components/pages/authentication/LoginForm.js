@@ -4,6 +4,11 @@ import {Actions} from 'react-native-router-flux';
 import {Button, Card, CardSection, Input} from '@components/common';
 import * as WOGApiClient from '@api_client/WogApiClient.js';
 
+import { apicase } from '@apicase/core'
+import fetch from '@apicase/adapter-fetch'
+
+const doRequest = apicase(fetch)
+
 class LoginForm extends Component {
     constructor(){
         super();
@@ -11,18 +16,15 @@ class LoginForm extends Component {
     }
 
     userLogin(){
-        // if (!this.state.email || !this.state.password) return;
-        const {clients} = this.props;
         const {email, password} = this.state;
-        const response = WOGApiClient.authLogin({email, password})
-        .then((responseData) => {
-            console.log(responseData);
-            if(responseData.key){
-                clients.authClient.setToken(responseData.key);
+        const {clients} = this.props;
+        WOGApiClient.authLogin({email, password})
+        .on('done', responseData => {
+                clients.authClient.setToken(responseData.body.key);
                 Actions.HomePage();
             }
-        })
-        .done();
+        )
+        .on('fail', res => console.warn(res))
     }
 
     render(){
