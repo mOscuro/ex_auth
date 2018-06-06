@@ -33,16 +33,16 @@ class WorkoutDetail extends React.Component {
 
     componentDidMount(){
         const response = WOGApiClient.workoutRounds(this.props.workoutId)
-        .then((rounds) => this.setState({rounds}));
+        .on('done', (res) => this.setState({rounds: res.body}));
     }
 
     renderSteps(round){
-        return round.steps.map(step => <StepItem step={step} />);
+        return round.steps.map(step => <StepItem step={step} key={`step-item-${step.id}`} />);
     }
 
     renderRounds(){
         return this.state.rounds.map((round) => (
-            <Card>
+            <Card key={`card-round-${round.id}`}>
                 <CardSection>
                     <Text>Repeat {round.nbRepeat} times</Text>
                 </CardSection>
@@ -53,7 +53,7 @@ class WorkoutDetail extends React.Component {
 
     handleDeleteWorkout(){
         const response = WOGApiClient.workoutDelete(this.state.workoutId)
-        .then(() => Actions.pop({ refresh: { title: 'new title' }}));
+        .on('done', () => Actions.pop({ refresh: { title: 'new title' }}));
     }
 
     render() {

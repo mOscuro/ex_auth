@@ -51,15 +51,17 @@ class HomePage extends Component{
         console.log(`create workout!`);
         
         const response = WOGApiClient.workoutCreate(name)
-        .then((workout) => Actions.WorkoutDetail({workoutId: workout.id, title: workout.name}));
+        .on('done', (res) => Actions.WorkoutDetail({workoutId: res.body.id, title: res.body.name}));
         
         // this.fetchWorkoutList()
     }
 
     renderWorkoutList(){
         if(this.state.workouts){
+            console.log('======')
+            console.log(this.state.workouts)
             return this.state.workouts.map(workout=>(
-                <CardSection>
+                <CardSection key={`CardSection${workout.id}`}>
                     <Button
                         key={workout.id}
                         onPress={() => this.onpenWorkoutDetail(workout)}

@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#28c128',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 20,
     },
 });
 
@@ -102,14 +101,18 @@ class FloatingCreateButton extends React.Component {
         this.state = {'isOpen': false, inputValue: null};
     }
 
+    openComponent(open){
+        this.setState({isOpen: open})
+    }
+    
     render() {
         const {inputLabel, placeHolder, onPress, customCallback} = this.props;
-
+        
         const floatinButton = (
             <View style={styles.floatingButtonContainerStyle}>
                 <TouchableOpacity
                     style={styles.touchableButtonStyle}
-                    onPress={() => this.setState({isOpen: true})}
+                    onPress={() => this.openComponent(true)}
                 >
                     <View style={styles.buttonContainerStyle}>
                         <Text style={styles.buttonIconStyle}>+</Text>
@@ -123,10 +126,11 @@ class FloatingCreateButton extends React.Component {
             <Modal
                 animationType='none'
                 transparent={true}
+                onRequestClose={() => this.openComponent(false)}
                 visible={true}>
                 <View style={styles.floatingBackgroundContainerStyle}>
                     <TouchableWithoutFeedback
-                        onPress={() => this.setState({isOpen: false})}
+                        onPress={() => this.openComponent(false)}
                     >
                         <View style={styles.testStyle}/>
                     </TouchableWithoutFeedback>

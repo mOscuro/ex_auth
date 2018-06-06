@@ -1,136 +1,86 @@
 
 import { AsyncStorage } from 'react-native';
 import axios from 'axios';
-import RestClient from '@api_client/rest_client.js';
 import AuthClient from '@api_client/auth_client.js';
-
-const WOG_API_ROOT_URL = 'http://192.168.104.76:8085';
-
-class ApiClient{
-
-    async storeAuthToken(selectedValue){
-        // Store authentication token in local storage of the device
-        try{
-            await AsyncStorage.setItem('token', selectedValue);
-        }catch (error){
-            console.error('[storeAuthToken] AsyncStorage error: ' + error.message);
-        }
-    }
-
-    async retrieveAuthToken(){
-        // Retrieve authentication token from local storage of the device
-        // Can return null if not token was found!
-        try{    
-            const token = await AsyncStorage.getItem('token')
-            return token
-        }catch (error){
-            console.error('[retrieveAuthToken] AsyncStorage error: ' + error.message);
-        }
-    }
-
-    api_request(method, url, params={}, data={}, headers = null, authenticated=true){
-        if (headers === null) {
-            headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        }
-        if (authenticated) {
-            const token = this.retrieveAuthToken().then((response)=>console.log(response));
-            headers = {...headers, 'Authorization': `Token ${token}`}
-        }
-        axios({url:url, method:method, headers:headers, params:params, data:data})
-        .then(function(response) {
-            
-            return response;
-        })
-        .catch(function (error) {
-            console.log(error);
-            return null;
-        });
-
-    }
-}
-
-const authClient = new AuthClient();
-const restClient = new RestClient({
-    apiOrigin: 'http://192.168.104.76:8085',
-    getToken: authClient.getInstanceToken,
-  });
-
 import { apicase } from '@apicase/core'
 import { ApiService } from '@apicase/services'
 import fetch from '@apicase/adapter-fetch'
 
+const WOG_API_ROOT_URL = 'http://192.168.1.33:8085';
+const authClient = new AuthClient();
 const doRequest = apicase(fetch)
 
-const ApiRoot = new ApiService(fetch, { url: 'http://192.168.104.76:8085' }).on('error', err => console.error(err))
-
-const WithAuthService = ApiRoot.extend({
-    hooks: {
-      /* Add client token */
-      before ({ payload, next }) {
-          console.log('========');
-          console.log(payload);
-        next(payload)
-      },
-    }
-});
+// const ApiRoot = new ApiService(fetch, { url: 'http://192.168.1.33:8085' }).on('error', err => console.error(err))
 
 export function authLogin({email, password}){
-    const loginService = ApiRoot.extend({ url: 'auth/login/' })
-    return loginService.doRequest({
+    // const loginService = ApiRoot.extend({ url: 'auth/login/' })
+    return doRequest({
+        url: `${WOG_API_ROOT_URL}/auth/login/`,
         method: 'POST',
         body: {
             email,
             password
+        },
+        hooks:{
+            done ({ payload, result, retry, next }) {
+                authClient.setToken(result.body.key);
+                next(result);
+            }
         }
     })
 }
 
 export function authRegister({firstName, lastName, email, password}){
-    return restClient.request({
-        url: `auth/registration/`,
-        method: RestClient.httpMethods.POST,
-        withToken: false,
+    return doRequest({
+        url: `${WOG_API_ROOT_URL}/auth/registration/`,
+        method: 'POST',
         body: {firstName, lastName, email, password}
-    });
+    })
 }
 
 export function authLogout(){
-    return restClient.request({
-        url: `auth/logout/`,
-        method: RestClient.httpMethods.POST,
-        withToken: true,
-    });
+    return doRequest({
+        url: `${WOG_API_ROOT_URL}/auth/logout/`,
+        method: 'POST',
+        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
+        hooks:{
+            done ({ payload, result, retry, next }) {
+                authClient.removeToken();
+                next(result);
+            }
+        }
+    })
 }
 
 export function workoutList(){
     return doRequest({
-        url: 'http://192.168.104.76:8085/workouts/',
+        url: `${WOG_API_ROOT_URL}/workouts/`,
         method: 'GET',
-        headers: {'Authorization': `token ${authClient.token}`},
+        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
     })
 }
 
 export function workoutRounds(workoutId){
-    return restClient.request({
-        url: `workouts/${workoutId}/rounds/`,
-        method: RestClient.httpMethods.GET,
-        withToken: true,
+    return doRequest({
+        url: `${WOG_API_ROOT_URL}/workouts/${workoutId}/rounds/`,
+        method: 'GET',
+        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
     });
 }
 
 export function workoutCreate(name){
-    return restClient.request({
-        url: `workouts/`,
-        method: RestClient.httpMethods.POST,
-        withToken: true,
+    return doRequest({
+        url: `${WOG_API_ROOT_URL}/workouts/`,
+        method: 'POST',
+        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
         body: {name}
     });
 }
 
 export function workoutDelete(id){
-    return restClient.request({
-        url: `workouts/${id}/`,
-        method: RestClient.httpMethods.DELETE,
-        withToken: true,
+    return doRequest({
+        url: `${WOG_API_ROOT_URL}/workouts/${id}/`,
+        method: 'DELETE',
+        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
     });
 }

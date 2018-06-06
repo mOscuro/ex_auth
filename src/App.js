@@ -3,8 +3,6 @@ import {AsyncStorage, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
 import {Actions} from 'react-native-router-flux';
 import {Spinner} from '@components/common';
-import AuthClient from '@api_client/auth_client.js';
-import RestClient from '@api_client/rest_client.js';
 import * as WOGApiClient from '@api_client/WogApiClient.js';
 import LoginForm from '@components/pages/authentication/LoginForm';
 import SignupForm from '@components/pages/authentication/SignupForm';
@@ -15,25 +13,14 @@ class App extends Component {
   constructor(){
     super();
     this.state = { hasToken: false, isLoaded: false };
-    
-    // clients initialization:
-    const authClient = new AuthClient();
-    const restClient = new RestClient({
-      apiOrigin: 'http://192.168.104.76:8085',
-      getToken: authClient.getInstanceToken,
-    });
-    this.clients = {
-      authClient,
-      restClient,
-    };
   }
 
   userLogout(){
     WOGApiClient.authLogout()
-    .then((response) => {
-        this.clients.authClient.removeToken();
+    .on('done', (response) => {
         Actions.LoginForm();
-    }).catch((error)=>console.log(error));
+    })
+    .on('error', (error) => console.log(error));
   }
 
   componentDidMount(){
@@ -54,7 +41,6 @@ class App extends Component {
             <Scene key='auth-pages' initial={!this.state.hasToken}>
               <Scene
                   {...rootProps}
-                  clients={this.clients}
                   component={LoginForm}
                   hideNavBar={true}
                   initial={true}

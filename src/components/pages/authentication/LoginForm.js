@@ -3,7 +3,7 @@ import {Alert, Text, TextInput, TouchableOpacity, View, AsyncStorage} from 'reac
 import {Actions} from 'react-native-router-flux';
 import {Button, Card, CardSection, Input} from '@components/common';
 import * as WOGApiClient from '@api_client/WogApiClient.js';
-
+import AuthClient from '@api_client/auth_client.js';
 import { apicase } from '@apicase/core'
 import fetch from '@apicase/adapter-fetch'
 
@@ -17,10 +17,9 @@ class LoginForm extends Component {
 
     userLogin(){
         const {email, password} = this.state;
-        const {clients} = this.props;
+        const {authClient} = this.props;
         WOGApiClient.authLogin({email, password})
         .on('done', responseData => {
-                clients.authClient.setToken(responseData.body.key);
                 Actions.HomePage();
             }
         )
