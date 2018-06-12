@@ -6,14 +6,28 @@ import { apicase } from '@apicase/core'
 import { ApiService } from '@apicase/services'
 import fetch from '@apicase/adapter-fetch'
 
-const WOG_API_ROOT_URL = 'http://192.168.1.33:8085';
+const WOG_API_ROOT_URL = 'http://192.168.104.76:8085';
 const authClient = new AuthClient();
 const doRequest = apicase(fetch)
 
-// const ApiRoot = new ApiService(fetch, { url: 'http://192.168.1.33:8085' }).on('error', err => console.error(err))
+const ApiRoot = new ApiService({adapter: fetch, url: WOG_API_ROOT_URL }).on('error', err => console.error(err))
 
+const WithAuthService = ApiRoot.extend({
+    hooks: {
+      /* Add client token */
+      before ({ payload, next }) {
+        // const token = localStorage.getItem('token')
+        payload.headers = { 
+          ...payload.headers, 
+          'Authorization': `token ${authClient.getInstanceToken()}`
+        }
+        next(payload)
+      }
+    }
+});
+
+// AUTH related ----------------------------
 export function authLogin({email, password}){
-    // const loginService = ApiRoot.extend({ url: 'auth/login/' })
     return doRequest({
         url: `${WOG_API_ROOT_URL}/auth/login/`,
         method: 'POST',
@@ -39,10 +53,9 @@ export function authRegister({firstName, lastName, email, password}){
 }
 
 export function authLogout(){
-    return doRequest({
-        url: `${WOG_API_ROOT_URL}/auth/logout/`,
+    return WithAuthService.doRequest({
+        url: `auth/logout/`,
         method: 'POST',
-        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
         hooks:{
             done ({ payload, result, retry, next }) {
                 authClient.removeToken();
@@ -52,35 +65,32 @@ export function authLogout(){
     })
 }
 
+// WORKOUT related ----------------------------
 export function workoutList(){
-    return doRequest({
-        url: `${WOG_API_ROOT_URL}/workouts/`,
-        method: 'GET',
-        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
+    return WithAuthService.doRequest({
+        url: `workouts/`,
+        method: 'GET'
     })
 }
 
 export function workoutRounds(workoutId){
-    return doRequest({
-        url: `${WOG_API_ROOT_URL}/workouts/${workoutId}/rounds/`,
+    return WithAuthService.doRequest({
+        url: `workouts/${workoutId}/rounds/`,
         method: 'GET',
-        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
     });
 }
 
 export function workoutCreate(name){
-    return doRequest({
-        url: `${WOG_API_ROOT_URL}/workouts/`,
+    return WithAuthService.doRequest({
+        url: `workouts/`,
         method: 'POST',
-        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
         body: {name}
     });
 }
 
 export function workoutDelete(id){
-    return doRequest({
-        url: `${WOG_API_ROOT_URL}/workouts/${id}/`,
+    return WithAuthService.doRequest({
+        url: `workouts/${id}/`,
         method: 'DELETE',
-        headers: {'Authorization': `token ${authClient.getInstanceToken()}`},
     });
 }

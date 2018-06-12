@@ -34,7 +34,6 @@ class LoginForm extends Component {
                         editable={true}
                         onChangeText={(email) => this.setState({email})}
                         placeholder='Email'
-                        ref='email'
                         returnKeyType='next'
                         value={this.state.email}
                     />
@@ -44,7 +43,6 @@ class LoginForm extends Component {
                         editable={true}
                         onChangeText={(password) => this.setState({password})}
                         placeholder='Password'
-                        ref='password'
                         returnKeyType='next'
                         secureTextEntry={true}
                         value={this.state.password}
