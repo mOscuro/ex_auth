@@ -8,6 +8,7 @@ import {
     View,
     TextInput
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Input} from '@components/common'
 
 const buttonSize = 60;
@@ -115,7 +116,9 @@ class FloatingCreateButton extends React.Component {
                     onPress={() => this.openComponent(true)}
                 >
                     <View style={styles.buttonContainerStyle}>
-                        <Text style={styles.buttonIconStyle}>+</Text>
+                        <Text style={styles.buttonIconStyle}>
+                            <Icon name="add" size={30}/>
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -154,7 +157,9 @@ class FloatingCreateButton extends React.Component {
                             }}
                         >
                             <View style={styles.floatingInputButtonContainerStyle}>
-                                <Text style={styles.buttonIconStyle}>Ok</Text>
+                                <Text style={styles.buttonIconStyle}>
+                                    <Icon name="done" size={30}/>
+                                </Text>
                             </View>
                         </TouchableOpacity>
                     </View>

@@ -48,18 +48,15 @@ class HomePage extends Component{
     }
 
     handleCreateWorkout(name){
-        console.log(`create workout!`);
-        
         const response = WOGApiClient.workoutCreate(name)
-        .on('done', (res) => Actions.WorkoutDetail({workoutId: res.body.id, title: res.body.name}));
-        
-        // this.fetchWorkoutList()
+        .on('done', (res) => {
+            this.setState({workouts: [...this.state.workouts, res.body]})
+            Actions.WorkoutDetail({workoutId: res.body.id, title: res.body.name})
+        });
     }
 
     renderWorkoutList(){
         if(this.state.workouts){
-            console.log('======')
-            console.log(this.state.workouts)
             return this.state.workouts.map(workout=>(
                 <CardSection key={`CardSection${workout.id}`}>
                     <Button
@@ -85,7 +82,7 @@ class HomePage extends Component{
                 </View>
                 <FloatingCreateButton
                     style={{elevation:2}}
-                    customCallback={this.handleCreateWorkout}
+                    customCallback={this.handleCreateWorkout.bind(this)}
                     inputLabel='Create a workout'
                     placeHolder='Name it...'
                 />
